@@ -1,5 +1,5 @@
 #include <string>
-#include <glut.h>
+#include <glew.h>
 
 using namespace std;
 
