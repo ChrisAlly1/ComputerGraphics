@@ -1,2 +1,4 @@
-﻿  002.vcxproj -> C:\Users\Chris\Documents\GitHub\ComputerGraphics\Solar System\Debug\002.exe
-  002.vcxproj -> C:\Users\Chris\Documents\GitHub\ComputerGraphics\Solar System\Debug\002.pdb (Full PDB)
+﻿  Program.cpp
+d:\helmaroc\documents\game projects\5th semester\computer graphics\assignments\assignment 2\computergraphics\solar system\002\angel.h(63): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+  002.vcxproj -> D:\Helmaroc\Documents\Game Projects\5th Semester\Computer Graphics\Assignments\Assignment 2\ComputerGraphics\Solar System\Debug\002.exe
+  002.vcxproj -> D:\Helmaroc\Documents\Game Projects\5th Semester\Computer Graphics\Assignments\Assignment 2\ComputerGraphics\Solar System\Debug\002.pdb (Full PDB)

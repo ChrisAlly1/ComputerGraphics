@@ -7,6 +7,7 @@
 #include "Planet.h"
 #include "List.h"
 #include "windows.h"
+
 using namespace std;
 
 Planet * planetHover;
@@ -18,7 +19,7 @@ float mouseX, mouseY = 90;
 const float halfpi = 3.1415f / 180;
 
 //stuff for sphere------------------------------------------------------------------------------
-const int NumTimesToSubdivide = 5;
+/*const int NumTimesToSubdivide = 5;
 const int NumTriangles = 4096;  // (4 faces)^(NumTimesToSubdivide + 1)
 const int NumVertices = 3 * NumTriangles;
 
@@ -31,10 +32,9 @@ vec3   normals[NumVertices];
 // Model-view and projection matrices uniform location
 GLuint  ModelView, Projection;
 int Index = 0;
+
 //stuff for sphere------------------------------------------------------------------------------
-void
-triangle(const point4& a, const point4& b, const point4& c)
-{
+void triangle(const point4& a, const point4& b, const point4& c) {
 	vec3  normal = normalize(cross(b - a, c - b));
 
 	normals[Index] = normal;  points[Index] = a;  Index++;
@@ -42,11 +42,7 @@ triangle(const point4& a, const point4& b, const point4& c)
 	normals[Index] = normal;  points[Index] = c;  Index++;
 }
 
-//----------------------------------------------------------------------------
-
-point4
-unit(const point4& p)
-{
+point4 unit(const point4& p) {
 	float len = p.x*p.x + p.y*p.y + p.z*p.z;
 
 	point4 t;
@@ -58,10 +54,7 @@ unit(const point4& p)
 	return t;
 }
 
-void
-divide_triangle(const point4& a, const point4& b,
-	const point4& c, int count)
-{
+void divide_triangle(const point4& a, const point4& b, const point4& c, int count) {
 	if (count > 0) {
 		point4 v1 = unit(a + b);
 		point4 v2 = unit(a + c);
@@ -70,15 +63,12 @@ divide_triangle(const point4& a, const point4& b,
 		divide_triangle(c, v2, v3, count - 1);
 		divide_triangle(b, v3, v1, count - 1);
 		divide_triangle(v1, v3, v2, count - 1);
-	}
-	else {
+	} else {
 		triangle(a, b, c);
 	}
 }
 
-void
-tetrahedron(int count)
-{
+void tetrahedron(int count) {
 	point4 v[4] = {
 		vec4(0.0, 0.0, 1.0, 1.0),
 		vec4(0.0, 0.942809, -0.333333, 1.0),
@@ -90,7 +80,7 @@ tetrahedron(int count)
 	divide_triangle(v[3], v[2], v[1], count);
 	divide_triangle(v[0], v[3], v[1], count);
 	divide_triangle(v[0], v[2], v[3], count);
-}
+}*/
 
 void Orbit() {
 	long newStopWatch = clock();
@@ -99,11 +89,11 @@ void Orbit() {
 		planets->Get(i)->Orbit(0.1f * ((newStopWatch - stopWatch) / 20), 30);
 	}
 
-	stopWatch = newStopWatch;
+	stopWatch = (float)newStopWatch;
 	glutPostRedisplay();
 }
 
-void Draw(void) {
+void display(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glMatrixMode(GL_MODELVIEW);
@@ -141,7 +131,7 @@ void JumpToPlanet(int index) {
 	planetHover = planet;
 }
 
-void KeyboardPressed(unsigned char key, int A, int B) {
+void keyboardHandler(unsigned char key, int A, int B) {
 	switch (key) {
 		case 'w': zoom--; break;
 		case 's': zoom++; break;
@@ -153,6 +143,8 @@ void KeyboardPressed(unsigned char key, int A, int B) {
 		case 27: exit(0); break;
 		default:break;
 	}
+
+	glutPostRedisplay();
 }
 
 unsigned char * LoadBmp(char *fn, int *wi, int *hi) {
@@ -168,6 +160,7 @@ unsigned char * LoadBmp(char *fn, int *wi, int *hi) {
 	if (t24 == NULL) { printf("Could not open input file\n"); exit(0); }
 	fread((char *)&bmfh, sizeof(BITMAPFILEHEADER), 1, t24);
 	fread((char *)&bmih, sizeof(BITMAPINFOHEADER), 1, t24);
+
 	if (bmih.biClrUsed != 0) {
 		nc = bmih.biClrUsed;
 	} else {
@@ -183,13 +176,16 @@ unsigned char * LoadBmp(char *fn, int *wi, int *hi) {
 	if (nc > 0) {
 		printf("Cannot handle paletted image\n"); exit(0); 
 	}
+
 	imagesize = bmfh.bfSize - bmfh.bfOffBits;
 	if ((lpBitmapBits = (unsigned char *)malloc(imagesize)) == NULL) { 
 		fclose(t24); exit(0); 
 	}
+
 	fread((char *)lpBitmapBits, imagesize, 1, t24);
 	fclose(t24);
 	*wi = bmih.biWidth; *hi = bmih.biHeight;
+
 	return lpBitmapBits;
 }
 
@@ -213,21 +209,20 @@ void AddTexture() {
 	}
 }
 
-
 void mouse(int button, int state, int x, int y) {
 	switch (button) {
 	case 0:
-		if (state == 0) {
-			if (dragX == -1) {
-				dragX = x;
-				dragY = y;
+		if (state == 0.0f) {
+			if (dragX == -1.0f) {
+				dragX = (float)x;
+				dragY = (float)y;
 			}
 			else {
-				dragX += x - mouseX;
-				dragY += y - mouseY;
+				dragX += (float)x - mouseX;
+				dragY += (float)y - mouseY;
 			}
-			mouseX = x;
-			mouseY = y;
+			mouseX = (float)x;
+			mouseY = (float)y;
 		}
 		break;
 	case 1:
@@ -238,8 +233,8 @@ void mouse(int button, int state, int x, int y) {
 }
 
 void mouseMove(int x, int y) {
-	mouseX = x;
-	mouseY = y;
+	mouseX = (float)x;
+	mouseY = (float)y;
 }
 
 void PrintMenu(unsigned char key) {
@@ -252,50 +247,48 @@ void PrintMenu(unsigned char key) {
 	cout << "--------------------------------------------" << endl;
 }
 
-void InitialiseGlut() {
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-	glutInitWindowSize(800, 800);
-	glutCreateWindow("Solar System");
-
-	glutReshapeFunc(ReshapeWindow);
-	glutDisplayFunc(Draw);
-	glutKeyboardFunc(KeyboardPressed);
-	glutMotionFunc(mouseMove);
-	glutMouseFunc(mouse);
-
-	glEnable(GL_DEPTH_TEST);
-	glFrontFace(GL_CCW);
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	glEnable(GL_COLOR_MATERIAL);
-	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-	glShadeModel(GL_SMOOTH);
-	glClearColor(0.0, 0.0, 0.0, 0.0);
-
-	glutIdleFunc(Orbit);
-	AddTexture();
-	glutMainLoop();
-}
-
-void InitialisePlanets() {
+void init() {
 	planets = new List<Planet*>();
+
 	planets->Add(new Planet("Sun", 0.0f, 0.0f, "Sun.bmp", 3.63f, 1.0f));
 	planets->Add(new Planet("Mercury", 50, 0.240f, "Mercury.bmp", 0.38f, 1.0f));
 	planets->Add(new Planet("Venus", 100, 0.615f, "Venus.bmp", 0.94f, 1.0f));
-	planets->Add(new Planet("Earth",160, 1.0f, "Earth.bmp", 1.0f, 1.0f));
-	planets->Add(new Planet("Mars", 220, 1.880f,"Mars.bmp", 0.53f, 1.0f));
+	planets->Add(new Planet("Earth", 160, 1.0f, "Earth.bmp", 1.0f, 1.0f));
+	planets->Add(new Planet("Mars", 220, 1.880f, "Mars.bmp", 0.53f, 1.0f));
 	planets->Add(new Planet("TheMoon", 10, 0.07f, "Pluto.bmp", 0.18f, 15.0f, planets->Get(3)));
-	planets->Add(new Planet("Phobos", 10, 0.09f - (float)(rand() % 60) / 1000, "Pluto.bmp", 0.1f, rand() % 180, planets->Get(4)));
-	planets->Add(new Planet("Deimos", 10, 0.09f - (float)(rand() % 60) / 1000, "Pluto.bmp", 0.1f, rand() % 180, planets->Get(4)));
+	planets->Add(new Planet("Phobos", 10, 0.06f, "Pluto.bmp", 0.1f, (float)(rand() % 180), planets->Get(4)));
+	planets->Add(new Planet("Deimos", 12, 0.05f, "Pluto.bmp", 0.08f, (float)(rand() % 180), planets->Get(4)));
 
 	planetHover = planets->Get(0);
+
+	PrintMenu('0');
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_COLOR_MATERIAL);
+	glFrontFace(GL_CCW);
+	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+	glShadeModel(GL_SMOOTH);
+
+	AddTexture();
 }
 
-int main(int argc, char **argv) {
-	InitialisePlanets();
-	PrintMenu('0');
+int main(int argc, char** argv) {
 	glutInit(&argc, argv);
-	InitialiseGlut();
-	return 0;
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+	glutInitWindowSize(800, 800);
+	glutCreateWindow("Solar System");
+
+	//glewInit();	//Initializes the glew and prepares the drawing pipeline.
+
+	init();
+	glutReshapeFunc(ReshapeWindow);
+	glutDisplayFunc(display);
+	glutKeyboardFunc(keyboardHandler);
+	glutMotionFunc(mouseMove);
+	glutMouseFunc(mouse);
+	glutIdleFunc(Orbit);
+
+	glutMainLoop();
 }
